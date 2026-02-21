@@ -1,0 +1,88 @@
+openapi: 3.0.0
+
+#metadata about the API, such as its title, description, and version.
+info:
+  title: Microsoft Graph Security Incidents API
+  description: Retrieve assigned security incidents from Microsoft Graph
+  version: 1.0.0
+
+#defines the base URL for the API, which clients will use to make requests.
+servers:
+  - url: https://graph.microsoft.com/v1.0
+    description: Microsoft Graph API url
+
+#specifies the available operations for the API, including the HTTP methods, parameters, request bodies, and responses.
+paths:
+  /security/incidents:
+    get:
+      #operationId: GetAssignedSecurityIncidents
+      summary: List assigned security incidents
+      description: Returns Microsoft Defender incidents that are assigned to users, including severity, priority score, and incident URLs.
+      #parameters:
+      #  - in: query
+      #    name: $filter
+      #    schema:
+      #      type: string
+      #    required: true
+      #    example: assignedTo ne null
+      #  - in: query
+      #    name: $select
+      #    schema:
+      #      type: string
+      #    required: true
+      #    example: assignedTo,id,incidentWebUrl,createdDateTime,lastUpdateDateTime,status,displayName,priorityScore,severity
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  value:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          description: Incident ID
+                        assignedTo:
+                          type: string
+                          description: Assigned user of the incident
+                        incidentWebUrl:
+                          type: string
+                          description: URL to the incident in Microsoft Defender portal
+                        displayName:
+                          type: string
+                          description: Name of the incident
+                        severity:
+                          type: string
+                          description: Severity of the incident (e.g., low, medium, high)
+                        priorityScore:
+                          type: number
+                          description: Priority score of the incident
+                        status:
+                          type: string
+                          description: Status of the incident (e.g., active, resolved)
+                        createdDateTime:
+                          type: string
+                          description: Date and time when the incident was created
+                        lastUpdateDateTime:
+                          type: string
+                          description: Date and time when the incident was last updated
+        '401':
+          description: Unauthorized error.
+        '403':
+          description: Forbidden access.
+        '500':
+          description: Internal server error.
+# Defines security mechanisms, such as authentication methods, that the API uses.
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+security:
+  - bearerAuth: []
