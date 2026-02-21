@@ -1,0 +1,33 @@
+openapi: 3.0.1
+info:
+  title: Graph Assigned Incidents
+  version: "1.0"
+
+servers:
+  - url: https://graph.microsoft.com/v1.0
+
+paths:
+  /security/incidents:
+    get:
+      operationId: GetAssignedSecurityIncidents
+      summary: List assigned incidents
+      description: Retrieves incidents assigned to users via Microsoft Graph
+
+      parameters:
+        - in: query
+          name: $filter
+          required: true
+          schema:
+            type: string
+          example: assignedTo ne null
+
+        - in: query
+          name: $select
+          required: true
+          schema:
+            type: string
+          example: assignedTo,id,incidentWebUrl,createdDateTime,lastUpdateDateTime,status,displayName,priorityScore,severity
+
+      responses:
+        "200":
+          description: Success
