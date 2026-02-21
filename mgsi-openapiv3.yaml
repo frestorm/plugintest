@@ -1,0 +1,91 @@
+openapi: 3.0.1
+info:
+  title: Microsoft Graph Security Incidents API
+  description: Retrieve assigned security incidents from Microsoft Graph
+  version: 1.0.0
+
+servers:
+  - url: https://graph.microsoft.com/v1.0
+    description: Microsoft Graph API url
+
+paths:
+  /security/incidents:
+    get:
+      operationId: GetAssignedSecurityIncidents
+      summary: List assigned security incidents
+      description: Returns Microsoft Defender incidents that are assigned to users, including severity, priority score, and incident URLs.
+      parameters:
+        - in: query
+          name: "$filter"
+          schema:
+            type: string
+          required: false
+          description: OData $filter expression (e.g. assignedTo ne null)
+          example: assignedTo ne null
+        - in: query
+          name: "$select"
+          schema:
+            type: string
+          required: false
+          description: OData $select (comma-separated list)
+          style: form
+          explode: false
+          example: assignedTo,id,incidentWebUrl,createdDateTime,lastUpdateDateTime,status,displayName,priorityScore,severity
+      responses:
+        "200":
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IncidentCollectionResponse'
+        "401":
+          description: Unauthorized error.
+        "403":
+          description: Forbidden access.
+        "500":
+          description: Internal server error.
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: "JWT"
+
+  schemas:
+    Incident:
+      type: object
+      properties:
+        id:
+          type: string
+        assignedTo:
+          type: string
+        incidentWebUrl:
+          type: string
+        displayName:
+          type: string
+        severity:
+          type: string
+        priorityScore:
+          type: number
+        status:
+          type: string
+        createdDateTime:
+          type: string
+          format: date-time
+        lastUpdateDateTime:
+          type: string
+          format: date-time
+      required:
+        - id
+
+    IncidentCollectionResponse:
+      type: object
+      properties:
+        value:
+          type: array
+          items:
+            $ref: '#/components/schemas/Incident'
+
+security:
+  - bearerAuth: []
